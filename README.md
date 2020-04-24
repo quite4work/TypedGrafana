@@ -47,6 +47,15 @@ servicesLayout.addPanelsWithContext(
     }),
     [ incoming, outgoing ]
 )
+
+let dashboard = new Dashboard({
+    title: "Hackweek dashboard"
+}).addLayout(servicesLayout)
+
+// See update.sh for how this can be applied
+writeFileSync(
+    './grafana-api-dashboard-update-payload.json',
+    JSON.stringify({dashboard, overwrite: true}))
 ```
 
 
