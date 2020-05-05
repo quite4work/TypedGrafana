@@ -1,5 +1,5 @@
 import { isArray, isObject } from "util"
-import {inspect} from 'util'
+import { inspect } from 'util'
 
 export class Context {
     variables: { [idx: string]: string } = {}
@@ -10,18 +10,18 @@ export class Context {
 
     get(idx: string) {
         let value = this.variables[idx]
-        if(typeof value === 'undefined') {
+        if (typeof value === 'undefined') {
             throw `Context variable '${idx}' was not available`
         }
         return value
     }
 
     merge(other?: Context): Context {
-        return new Context({...this.variables, ...other?.variables})
+        return new Context({ ...this.variables, ...other?.variables })
     }
 
     resolve<T>(x: Parameter<T>): T {
-        if(x instanceof Function) {
+        if (x instanceof Function) {
             return x(this)
         }
         return x
@@ -48,13 +48,13 @@ type GrafanaOption =
 
 type GrafanaOptions =
     GrafanaOption |
-    GrafanaOption[] | 
+    GrafanaOption[] |
     undefined
-    
+
 export abstract class GrafanaObj implements Renderable {
     abstract options: StringOptionMap
 
-    preRender(c: Context): void {}
+    preRender(c: Context): void { }
     // postRender(c: Context, result: StringMap<any>): StringMap<any> {
     //     return result
     // }
@@ -63,7 +63,7 @@ export abstract class GrafanaObj implements Renderable {
         this.preRender(c)
 
         let result: StringMap<any> = {}
-        for(let key in this.options) {
+        for (let key in this.options) {
             result[key] = this.renderOption(c, this.options[key])
         }
 
@@ -72,15 +72,15 @@ export abstract class GrafanaObj implements Renderable {
     }
 
     renderOption(c: Context, option: GrafanaOptions): any {
-        if(isArray(option)) {
+        if (isArray(option)) {
             return option.map((x) => this.renderOption(c, x))
         }
 
-        if(isObject(option) && isRenderable(option)) {
-            return option.renderWithContext(c)    
-        } 
-        
-        if(option instanceof Function) {
+        if (isObject(option) && isRenderable(option)) {
+            return option.renderWithContext(c)
+        }
+
+        if (option instanceof Function) {
             return c.resolve<any>(option)
         }
 
@@ -105,13 +105,13 @@ export class Dashboard implements Renderable {
         title: "Untitled dashboard"
     }
 
-    context: Context 
+    context: Context
     layouts: Layout[]
 
     constructor(options: Partial<DashboardOptions> = {}) {
         this.context = new Context
         this.layouts = []
-        this.options = {...Dashboard.defaults, ...options}
+        this.options = { ...Dashboard.defaults, ...options }
     }
 
     addLayout(layout: Layout): this {
@@ -129,7 +129,7 @@ export class Dashboard implements Renderable {
             cursorY = res.cursorY
             panels = panels.concat(res.panels)
         })
-        return {...this.options, panels}
+        return { ...this.options, panels }
     }
 
     render(): object {
@@ -154,7 +154,7 @@ export class GridPosition implements Renderable {
         this.options = options;
     }
     renderWithContext(c: Context): object {
-        return {...this.options}
+        return { ...this.options }
     }
 }
 
@@ -171,8 +171,8 @@ export abstract class Panel extends GrafanaObj {
         return (<GridPosition>this.options.gridPos) ?? new GridPosition()
     }
 
-    setSize(width: number, height: number): this {
-        this.options.gridPos = new GridPosition({w: width, h: height})
+    setSize(width?: number, height?: number): this {
+        this.options.gridPos = new GridPosition({ w: width, h: height })
         return this
     }
 }
@@ -192,7 +192,7 @@ export class Graph extends Panel {
     constructor(options: Partial<GraphOptions> = {}) {
         super()
         this.targets = []
-        this.options = {...Graph.defaults, ...options}
+        this.options = { ...Graph.defaults, ...options }
     }
 
     preRender(c: Context): void {
@@ -207,11 +207,11 @@ export class Graph extends Panel {
 
     clone(): this {
         let x = new Graph
-        x.options = {...this.options}
+        x.options = { ...this.options }
         x.targets = this.targets
         return <this>x
     }
-}  
+}
 
 
 
@@ -225,7 +225,7 @@ export class Datasource implements Renderable {
     constructor(name: StringParameter) {
         this.name = name
     }
-    renderWithContext(c: Context): any  {
+    renderWithContext(c: Context): any {
         return c.resolve(this.name)
     }
 }
@@ -238,7 +238,7 @@ export class Datasource implements Renderable {
 
 
 
-abstract class Target extends GrafanaObj {}
+abstract class Target extends GrafanaObj { }
 
 interface PrometheusOptions {
     expr: StringParameter
@@ -250,14 +250,14 @@ export class PrometheusQuery extends GrafanaObj implements Target {
     options: StringOptionMap & PrometheusOptions
     constructor(options: PrometheusOptions) {
         super()
-        this.options = {...options}
+        this.options = { ...options }
     }
 }
 
 
 
 
-enum TextMode {
+export enum TextMode {
     Markdown = "markdown",
     HTML = "html"
 }
@@ -266,29 +266,29 @@ interface TextOptions {
     content: string,
     title?: string,
 }
-class Text extends Panel {
+export class Text extends Panel {
     options: StringOptionMap & TextOptions
 
     static defaults: TextOptions = {
         mode: TextMode.Markdown,
         content: ""
     }
-    
+
     constructor(options: TextOptions) {
         super()
-        this.options = {...Text.defaults, ...options}
+        this.options = { ...Text.defaults, ...options }
         this.options['type'] = 'text'
     }
 
     clone(): this {
-        return <this>new Text({...this.options})
+        return <this>new Text({ ...this.options })
     }
 }
 
 export class Headers {
     static dashboard(title: string, slackChannel: string): Panel {
         let content = `<center><h1>${title}</h1> <h3>Slack: ${slackChannel}</h3></center>`
-        return new Text({mode: TextMode.HTML, content})
+        return new Text({ mode: TextMode.HTML, content }).setSize(24, 3)
     }
 
     static service(name: string, graylogUrl: string, repositoryUrl: string): Panel {
@@ -296,12 +296,12 @@ export class Headers {
             <center>
                 <h1>${name}</h1>
                 <h2>
-                    <a href="${graylogUrl}">Graylog</a> –
-                    <a href="${repositoryUrl}">Repository</a>
+                    <a target="_blank" href="${graylogUrl}">Graylog</a> –
+                    <a target="_blank" href="${repositoryUrl}">Repository</a>
                 </h2>
             </center>
         `
-        return new Text({mode: TextMode.HTML, content})
+        return new Text({ mode: TextMode.HTML, content }).setSize(24, 3)
     }
 }
 
@@ -309,74 +309,10 @@ export class Headers {
 // current "cursor position", i.e. the position where the last
 // element from this layout _ends_
 interface Layout {
-    renderWithContext(c: Context, cursorX: number, cursorY: number):{
+    renderWithContext(c: Context, cursorX: number, cursorY: number): {
         panels: object, cursorX: number, cursorY: number
     }
 }
-
-
-interface FullWidthLayoutOptions {
-    defaultPanelWidth: number
-    defaultPanelHeight: number
-}
-
-export class FullWidthLayout implements Layout {
-    options: FullWidthLayoutOptions
-    static defaults: FullWidthLayoutOptions = {
-        defaultPanelWidth: 6,
-        defaultPanelHeight: 4
-    }
-
-    panels: {
-        panel: Panel,
-        context?: Context,
-    }[] = []
-
-    constructor(options: Partial<FullWidthLayoutOptions> = {}) {
-        this.options = {...FullWidthLayout.defaults, ...options}
-    }
-
-    addPanels(panels: Panel[]) {
-        panels.forEach((panel) => {
-            this.panels.push({panel: panel.clone()})
-        })
-    }
-
-    renderWithContext(c: Context, cursorX: number, cursorY: number): { panels: object; cursorX: number; cursorY: number } {
-        let currentX = cursorX;
-        let currentY = cursorY;
-
-        this.panels.forEach((p) => {
-            let res = positionUtil(
-                p.panel,
-                0,
-                24,
-                this.options.defaultPanelWidth,
-                this.options.defaultPanelHeight,
-                currentX,
-                currentY,
-            )
-
-            currentX = res.currentX
-            currentY = res.currentY
-        })
-
-        //console.log(inspect(this.panels, true, 5, true))
-
-        let panels: StringMap<any>[] = []
-        this.panels.forEach((p) => {
-            panels.push(p.panel.renderWithContext(c))
-        })
-
-        return {
-            panels,
-            cursorX: 0,
-            cursorY: currentY + this.options.defaultPanelHeight
-        }
-    }
-}
-
-
 
 
 interface ColumnLayoutOptions {
@@ -406,22 +342,22 @@ export class ColumnLayout implements Layout {
     }[] = []
 
     constructor(options: Partial<ColumnLayoutOptions> = {}) {
-        this.options = {...ColumnLayout.defaults, ...options}
+        this.options = { ...ColumnLayout.defaults, ...options }
     }
 
     addPanelsWithContext(column: number, context: Context, panels: Panel[]) {
         panels.forEach((panel) => {
-            this.panels.push({panel: panel.clone(), context, column})
+            this.panels.push({ panel: panel.clone(), context, column })
         })
     }
 
-    renderWithContext(c: Context, cursorX: number, cursorY: number): {panels: object, cursorX: number, cursorY: number} {
+    renderWithContext(c: Context, cursorX: number, cursorY: number): { panels: object, cursorX: number, cursorY: number } {
         let columnXOffset = 0
         let allYs: number[] = [cursorY]
 
-        for(let columnIdx in this.options.columns) {
+        for (let columnIdx in this.options.columns) {
             let panels = this.panels.filter((p) => p.column === parseInt(columnIdx))
-            
+
             let column = this.options.columns[columnIdx]
 
             let currentX = columnXOffset
@@ -429,7 +365,6 @@ export class ColumnLayout implements Layout {
 
 
             panels.forEach((p) => {
-
                 let res = positionUtil(
                     p.panel,
                     columnXOffset,
@@ -438,6 +373,7 @@ export class ColumnLayout implements Layout {
                     this.options.defaultPanelHeight,
                     currentX,
                     currentY,
+                    column.width
                 )
 
                 currentX = res.currentX
@@ -454,8 +390,8 @@ export class ColumnLayout implements Layout {
             panels.push(p.panel.renderWithContext(p.context))
         })
 
-    
-        return { 
+
+        return {
             panels,
             cursorX: 0,
             cursorY: Math.max(...allYs),
@@ -472,9 +408,9 @@ export function positionUtil(
     defaultWidth: number,
     defaultHeight: number,
     currentX: number,
-    currentY: number
-): {currentX: number, currentY: number, height: number}
-{
+    currentY: number,
+    columnWidth: number,
+): { currentX: number, currentY: number, height: number } {
     assert(currentX >= minX, "The initial X cursor most not be smaller than the mininum X cursor")
 
     let gridPos = panel.getGridPosition()
@@ -484,18 +420,23 @@ export function positionUtil(
     let w = gridPos.options.w ?? defaultWidth
     let h = gridPos.options.h ?? defaultHeight
 
-    if(x + w > maxX) {
+    // Scale panel width relative to column width. E.g. in a width = 12 column, a panel of width "24"
+    // is scaled to width 12. This allows panels to be configured independently of the columns they are
+    // placed in.
+    w *= (columnWidth / 24)
+
+    if (x + w > maxX) {
         x = minX
         y += h
     }
-    
-    let newPos = new GridPosition({x, y, w, h})
+
+    let newPos = new GridPosition({ x, y, w, h })
     panel.setGridPosition(newPos)
 
     currentX = x + w
     currentY = y
 
-    if(currentX >= maxX) {
+    if (currentX >= maxX) {
         currentX = minX
         currentY += h
     }
@@ -504,5 +445,5 @@ export function positionUtil(
     // console.log(newPos)
     // console.log("---")
 
-    return {currentX, currentY, height: h}
+    return { currentX, currentY, height: h }
 }
