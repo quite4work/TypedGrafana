@@ -162,7 +162,6 @@ export class GridPosition implements Renderable {
 
 export abstract class Panel extends GrafanaObj {
     setGridPosition(pos: GridPosition): this {
-        console.log("setting grid position", pos)
         this.options.gridPos = pos
         return this
     }
@@ -177,14 +176,44 @@ export abstract class Panel extends GrafanaObj {
     }
 }
 
+
+export interface YAxisOptions {
+    format: string,
+    logBase: number,
+    show: boolean,
+    label?: string,
+    max?: number,
+    min?: number,
+}
+export class YAxis implements Renderable {
+    options: StringOptionMap & YAxisOptions
+    static defaults: YAxisOptions = {
+        format: 'short',
+        logBase: 1,
+        show: true,
+    }
+
+    constructor(options: Partial<YAxisOptions>) {
+        this.options = { ...YAxis.defaults, ...options }
+    }
+
+    renderWithContext(c: Context): object {
+        return this.options
+    }
+}
+
+
 export interface GraphOptions {
     title: string
+    stack: boolean,
+    yaxes?: YAxis[],
     datasource?: Datasource
 }
 export class Graph extends Panel {
     options: StringOptionMap & GraphOptions
     static defaults: GraphOptions = {
-        title: "Untitled Graph"
+        title: "Untitled Graph",
+        stack: false,
     }
 
     targets: Target[]
@@ -193,6 +222,17 @@ export class Graph extends Panel {
         super()
         this.targets = []
         this.options = { ...Graph.defaults, ...options }
+
+        // Grafana is picky about how many Y-axes you have in your graphs. Either you don't
+        // specify the option at all (undefined, not an empty array), or you have two. Everything
+        // else will lead to errors in the dashboard.
+        if (this.options.yaxes) {
+            assert(this.options.yaxes?.length > 0, "You specified an empty array of Y-axes. This will confuse Grafana. Please specify either one or two Y-axes.")
+            if (this.options.yaxes?.length == 1) {
+                this.options.yaxes?.push(new YAxis({}))
+            }
+        }
+
     }
 
     preRender(c: Context): void {
