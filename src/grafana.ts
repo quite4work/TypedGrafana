@@ -409,7 +409,7 @@ export class ColumnLayout implements Layout {
                     p.panel,
                     columnXOffset,
                     columnXOffset + column.width,
-                    Math.floor((column.width * this.options.defaultPanelWidth) / 24),
+                    this.options.defaultPanelWidth,
                     this.options.defaultPanelHeight,
                     currentX,
                     currentY,
