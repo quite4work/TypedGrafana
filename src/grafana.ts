@@ -207,7 +207,7 @@ export interface GraphOptions {
     title: string
     stack: boolean,
     yaxes?: YAxis[],
-    datasource?: Datasource
+    datasource?: Datasource,
 }
 export class Graph extends Panel {
     options: StringOptionMap & GraphOptions
@@ -331,13 +331,14 @@ export class Headers {
         return new Text({ mode: TextMode.HTML, content }).setSize(24, 3)
     }
 
-    static service(name: string, graylogUrl: string, repositoryUrl: string): Panel {
+    static service(opts: { name: string, logsUrl: string, repositoryUrl: string, ciUrl: string }): Panel {
         let content = `
             <center>
-                <h1>${name}</h1>
+                <h1>${opts.name}</h1>
                 <h2>
-                    <a target="_blank" href="${graylogUrl}">Graylog</a> –
-                    <a target="_blank" href="${repositoryUrl}">Repository</a>
+                    <a target="_blank" href="${opts.logsUrl}">Graylog</a> –
+                    <a target="_blank" href="${opts.repositoryUrl}">Repository</a> –
+                    <a target="_blank" href="${opts.ciUrl}">Pipeline</a>
                 </h2>
             </center>
         `
