@@ -381,7 +381,7 @@ interface ColumnLayoutOptions {
 export class ColumnLayout implements Layout {
     static defaults: ColumnLayoutOptions = {
         defaultPanelWidth: 24,
-        defaultPanelHeight: 4,
+        defaultPanelHeight: 5,
         columns: [
             { width: 12 },
             { width: 12 },
