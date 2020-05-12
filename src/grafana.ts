@@ -177,6 +177,22 @@ export abstract class Panel extends GrafanaObj {
 }
 
 
+export interface DatasourceOptions {
+    name: StringParameter
+}
+
+export class Datasource implements Renderable {
+    name: StringParameter
+    constructor(name: StringParameter) {
+        this.name = name
+    }
+    renderWithContext(c: Context): any {
+        return c.resolve(this.name)
+    }
+}
+
+export const MixedDatasource = new Datasource("-- Mixed --")
+
 export interface YAxisOptions {
     format: string,
     logBase: number,
@@ -206,14 +222,15 @@ export class YAxis implements Renderable {
 export interface GraphOptions {
     title: string
     stack: boolean,
+    datasource: Datasource,
     yaxes?: YAxis[],
-    datasource?: Datasource,
 }
 export class Graph extends Panel {
     options: StringOptionMap & GraphOptions
     static defaults: GraphOptions = {
         title: "Untitled Graph",
         stack: false,
+        datasource: MixedDatasource,
     }
 
     targets: Target[]
@@ -256,25 +273,6 @@ export class Graph extends Panel {
 
 
 
-export interface DatasourceOptions {
-    name: StringParameter
-}
-
-export class Datasource implements Renderable {
-    name: StringParameter
-    constructor(name: StringParameter) {
-        this.name = name
-    }
-    renderWithContext(c: Context): any {
-        return c.resolve(this.name)
-    }
-}
-
-
-
-
-
-
 
 
 
@@ -284,15 +282,31 @@ interface PrometheusOptions {
     expr: StringParameter
     legendFormat?: StringParameter
     datasource?: Datasource
-
 }
-export class PrometheusQuery extends GrafanaObj implements Target {
+export class PrometheusQuery extends Target {
     options: StringOptionMap & PrometheusOptions
     constructor(options: PrometheusOptions) {
         super()
         this.options = { ...options }
     }
 }
+
+interface InfluxDbOptions {
+    alias: StringParameter
+    datasource: Datasource
+    query: StringParameter
+}
+export class InfluxDbQuery extends Target {
+    options: StringOptionMap & InfluxDbOptions
+    constructor(options: InfluxDbOptions) {
+        super()
+        this.options = { ...options }
+        this.options['rawQuery'] = true
+    }
+}
+
+
+
 
 
 
