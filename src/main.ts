@@ -5,16 +5,13 @@ import {
     PrometheusQuery,
     Context,
     ColumnLayout,
-    FullWidthLayout,
     Headers
-} from "./grafana";
+} from "./";
 
 // To write to a JSON file :)
 import { writeFileSync } from 'fs'
 
 let thanos = new Datasource("Thanos")
-
-
 
 let incoming = new Graph({
     title: "Incoming messages / s",
@@ -24,7 +21,7 @@ let incoming = new Graph({
         expr: (c) => `sum by(cluster) ( increase(misc:application:${c.get('id')}_incoming_messages[1m]))`,
         legendFormat: "{{cluster}}"
     }))
-    
+
 let outgoing = new Graph({
     title: "Outgoing messages / s",
     datasource: thanos,
@@ -79,11 +76,12 @@ servicesLayout.addPanelsWithContext(
         serviceName: "some-other-service-name"
     }),
     [
-        Headers.service(
-            "REST API",
-            "https://google.com",
-            "https://google.com"
-        ),
+        Headers.service({
+            name: "REST API",
+            ciUrl: "https://google.com",
+            logsUrl: "https://google.com",
+            repositoryUrl: "https://google.com",
+        }),
         incoming,
         outgoing,
         server_errors,
@@ -99,11 +97,12 @@ servicesLayout.addPanelsWithContext(
         serviceName: "some-service-name"
     }),
     [
-        Headers.service(
-            "Message transformer",
-            "https://google.com",
-            "https://google.com"
-        ),
+        Headers.service({
+            name: "Message transformer",
+            ciUrl: "https://google.com",
+            logsUrl: "https://google.com",
+            repositoryUrl: "https://google.com",
+        }),
         incoming,
         outgoing,
         server_errors,
@@ -118,4 +117,4 @@ let dashboard = new Dashboard({
 
 writeFileSync(
     './build/temp.json',
-    JSON.stringify({dashboard, overwrite: true,}))
+    JSON.stringify({ dashboard, overwrite: true, }))
