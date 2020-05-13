@@ -16,7 +16,7 @@ I feel like some examples will best illustrate the ideas behind TypedGrafana. If
 
 ## Why?
 
-As you can see below, there are a variety of other projects with very similar goals. I tried some of these before I decided to write TypedGrafana, and overall wasn't happy with the development experience:
+As you can see below, there's no shortage of other projects that try to make Grafana dashboards easier to write. I tried some of these before I decided to write TypedGrafana, and overall wasn't happy with the development experience:
 
 * For me, YAML is both difficult to read and write, so I try to avoid it
 * Jsonnet isn't powerful enough for the features I want, such as dynamic column layouts where grid position needs to be calculated
