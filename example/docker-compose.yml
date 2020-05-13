@@ -1,0 +1,17 @@
+version: '2.0'
+services:
+  prometheus:
+    # v2.18.1
+    image: prom/prometheus@sha256:5880ec936055fad18ccee798d2a63f64ed85bd28e8e0af17c6923a090b686c3d
+    volumes:
+        - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+    ports:
+    - "9090:9090"
+  grafana:
+    # v6.7.3
+    image: grafana/grafana@sha256:b409a69218ca5990b61e33fe00121c94b2f9b5a7ec2f3118c703454c26067020
+    ports:
+        - "3000:3000"
+    volumes:
+        - "./grafana-data:/var/lib/grafana"
+
