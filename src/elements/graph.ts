@@ -34,6 +34,9 @@ export interface GraphOptions {
     datasource: Datasource,
     yaxes?: YAxis[],
     seriesOverrides?: SeriesOverride[],
+    interval?: string,
+    bars?: boolean,
+    lines?: boolean,
 }
 export class Graph extends Panel {
     options: StringOptionMap & GraphOptions
