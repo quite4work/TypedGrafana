@@ -224,6 +224,7 @@ export interface GraphOptions {
     stack: boolean,
     datasource: Datasource,
     yaxes?: YAxis[],
+    seriesOverrides?: SeriesOverride[],
 }
 export class Graph extends Panel {
     options: StringOptionMap & GraphOptions
@@ -357,6 +358,14 @@ export class Headers {
             </center>
         `
         return new Text({ mode: TextMode.HTML, content }).setSize(24, 3)
+    }
+}
+
+export class SeriesOverride extends GrafanaObj {
+    options: StringOptionMap
+    constructor(options: StringOptionMap) {
+        super()
+        this.options = { ...options }
     }
 }
 
