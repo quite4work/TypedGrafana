@@ -5,17 +5,14 @@ export interface DashboardOptions {
 }
 export class Dashboard implements Renderable {
     options: DashboardOptions
-    static defaults: DashboardOptions = {
-        title: "Untitled dashboard"
-    }
 
     context: Context
     layouts: Layout[]
 
-    constructor(options: Partial<DashboardOptions> = {}) {
+    constructor(options: DashboardOptions) {
         this.context = new Context
         this.layouts = []
-        this.options = { ...Dashboard.defaults, ...options }
+        this.options = { ...options }
     }
 
     addLayout(layout: Layout): this {
