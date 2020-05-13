@@ -1,5 +1,6 @@
 import { strict as assert } from 'assert';
 import { Renderable, StringOptionMap, Context, Datasource, Panel, StringParameter, GrafanaObj } from ".."
+import { NumberParameter, BooleanParameter } from '..';
 
 export interface YAxisOptions {
     format: string,
@@ -114,9 +115,19 @@ export class InfluxDbQuery extends Target {
     }
 }
 
+
+interface SeriesOverrideOptions {
+    alias: StringParameter
+    color?: StringParameter
+    fill?: NumberParameter
+    lines?: BooleanParameter
+    dashes?: BooleanParameter
+    hideTooltip?: BooleanParameter
+    nullPointMode?: StringParameter
+}
 export class SeriesOverride extends GrafanaObj {
-    options: StringOptionMap
-    constructor(options: StringOptionMap) {
+    options: StringOptionMap & SeriesOverrideOptions
+    constructor(options: SeriesOverrideOptions) {
         super()
         this.options = { ...options }
     }
