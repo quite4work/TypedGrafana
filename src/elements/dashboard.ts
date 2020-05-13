@@ -1,7 +1,17 @@
 import { StringParameter, Renderable, Context, Layout } from ".."
 
+// This doesn't work because setting the graphTooltip option in the]
+// top-level dashboard object doesn't actually do anything. When you do
+// this in the grafana UI, it updates every panel individually with a
+// `tooltip` option :(
+// export enum TooltipType {
+//     Default = 0,
+//     SharedCrosshair = 1,
+//     SharedTooltip = 2,
+// }
+
 export interface DashboardOptions {
-    title: StringParameter
+    title: string,
 }
 export class Dashboard implements Renderable {
     options: DashboardOptions
