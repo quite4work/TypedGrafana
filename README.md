@@ -1,68 +1,37 @@
-# Grafscript
+# TypedGrafana
 
-**Disclaimer: early stage of development and likely not ready for your use-case yet :)**
+**Disclaimer: early stage of development**
 
-This project is an attempt to provide a declarative way to define Grafana dashboards that is less obscure than the Grafana JSON model. Here's an example:
+This library is an attempt to provide a declarative way to define Grafana dashboards that is more powerful and less obscure than the Grafana JSON model.
 
-```typescript
-let thanos = new Datasource("Thanos Datasource")
 
-let incoming = new Graph({
-    title: "Incoming messages / s",
-    datasource: thanos,
-})
-    .addTarget(new PrometheusQuery({
-        expr: (c) => `sum by(cluster) ( increase(misc:application:${c.get('serviceId')}_incoming_messages[1m]))`,
-        legendFormat: "{{cluster}}"
-    }))
+## Quick start
 
-let outgoing = new Graph({
-    title: "Outgoing messages / s",
-    datasource: thanos,
-})
-    .addTarget(new PrometheusQuery({
-        expr: (c) => `sum by(cluster) ( increase(misc:application:${c.get('serviceId')}_outgoing_messages[1m]))`,
-        legendFormat: "{{cluster}}"
-    }))
+I feel like some examples will best illustrate the ideas behind TypedGrafana. If you like learning by doing, you can use the setup in the `example/` directory which will spin up a local Grafan for you (docker + docker-compose required).
 
-let layout = new ColumnLayout({
-    columns: [
-        { width: 12 },
-        { width: 12 }
-    ]
-})
+* Let's start by creating a minimal dashboard
 
-servicesLayout.addPanelsWithContext(
-    0,
-    new Context({
-        serviceId: "some_service",
-    }),
-    [ incoming, outgoing ]
-)
+(Sorry, work in progress)
 
-servicesLayout.addPanelsWithContext(
-    1,
-    new Context({
-        serviceId: "some_other_service",
-    }),
-    [ incoming, outgoing ]
-)
 
-let dashboard = new Dashboard({
-    title: "Hackweek dashboard"
-}).addLayout(servicesLayout)
+## Why?
 
-// See update.sh for how this can be applied
-writeFileSync(
-    './grafana-api-dashboard-update-payload.json',
-    JSON.stringify({dashboard, overwrite: true}))
-```
+As you can see below, there are a variety of other projects with very similar goals. I tried some of these before I decided to write TypedGrafana, and overall wasn't happy with the development experience:
+
+* For me, YAML is both difficult to read and write, so I try to avoid it
+* Jsonnet isn't powerful enough for the features I want, such as dynamic column layouts where grid position needs to be calculated
+* Very limited autocompletion when using `grafana-dash-gen`
 
 
 ## Similar projects
 
-* [Grafonnet](https://github.com/grafana/grafonnet-lib)
-* [Grafana dashboard builder](https://github.com/jakubplichta/grafana-dashboard-builder)
+* [grafana-dash-gen (JavaScript)](https://github.com/uber/grafana-dash-gen)
+* [grafanalib (Python)](https://github.com/weaveworks/grafanalib)
+* [Grafonnet (Jsonnet)](https://github.com/grafana/grafonnet-lib)
+* [Grafana dashboard builder (YAML, Python)](https://github.com/jakubplichta/grafana-dashboard-builder)
+* [grafana-dashboards-generator (YAML, Python)](https://github.com/Showmax/grafana-dashboards-generator)
+* [grafyaml (YAML)](https://docs.openstack.org/infra/grafyaml/)
+* [salt.states.grafana4_dashboard (YAML)](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.grafana4_dashboard.html)
 
 
 ## License
