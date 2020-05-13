@@ -1,4 +1,5 @@
-import { positionUtil, Panel, Context, StringOptionMap } from './grafana';
+import { Panel, Context, StringOptionMap } from '.'
+import { positionUtil } from './positioning';
 
 import { expect, Assertion } from 'chai';
 import 'mocha';
