@@ -40,8 +40,11 @@ export class ColumnLayout implements Layout {
         this.options = { ...ColumnLayout.defaults, ...options }
     }
 
-    addPanelsWithContext(column: number, context: Context, panels: Panel[]) {
-        panels.forEach((panel) => {
+    add(opts: { column?: number, context?: Context, panels: Panel[] }) {
+        let column = opts.column ?? 0
+        let context = opts.context ?? new Context
+
+        opts.panels.forEach((panel) => {
             this.panels.push({ panel: panel.clone(), context, column })
         })
     }
