@@ -7,11 +7,38 @@ This library is an attempt to provide a declarative way to define Grafana dashbo
 
 ## Quick start
 
-I feel like some examples will best illustrate the ideas behind TypedGrafana. If you like learning by doing, you can use the setup in the `example/` directory which will spin up a local Grafan for you (docker + docker-compose required).
+I feel like some examples will best illustrate the ideas behind TypedGrafana. If you like learning by doing, you can use the setup in the `example/` directory which will spin up a local Grafana for you (docker + docker-compose required). Please see the README in that directory for more information.
 
-* Let's start by creating a minimal dashboard
+Let's start with very a minimal dashboard:
 
-(Sorry, work in progress)
+```typescript
+import { Datasource, Graph, PrometheusQuery, ColumnLayout, Dashboard, Context } from "../src"
+
+// The parameter is the datasource name in Grafana
+let prometheus = new Datasource("Yay Prometheus")
+
+let http_requests = new Graph({
+    title: "HTTP requests per minute",
+    datasource: prometheus,
+})
+    .addTarget(new PrometheusQuery({
+        expr: `increase(prometheus_http_requests_total[1m])`,
+        legendFormat: "{{handler}}",
+    }))
+
+let layout = new ColumnLayout()
+layout.add({
+    panels: [http_requests]
+})
+
+export default new Dashboard({
+    title: "Prometheus monitoring Prometheus"
+}).addLayout(layout)
+```
+
+This will create a very simple dashboard with just a single graph.
+
+(TODO work in progress)
 
 
 ## Why?
