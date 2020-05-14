@@ -1,6 +1,6 @@
 {
   "name": "typed-grafana",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Write flexible and re-usable Grafana dashboards in TypeScript",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
