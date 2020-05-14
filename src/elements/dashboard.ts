@@ -47,7 +47,7 @@ export class Dashboard implements Renderable {
         return this.renderWithContext(this.context)
     }
 
-    toJSON(): any {
-        return this.render()
+    print(): void {
+        console.log(JSON.stringify(this.render(), null, 2))
     }
 }

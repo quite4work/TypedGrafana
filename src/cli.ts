@@ -3,10 +3,8 @@ import { fileSync } from 'tmp'
 import { writeFileSync } from 'fs'
 import { resolve } from 'path'
 
-import { Dashboard } from '.'
-
 program
-    .version('0.0.1')
+    .version('@VERSION@')
     .description("")
     .command('typed-grafana <file>')
     .option('--no-ssl', "Don't access the API via SSL (not recommended, only for local use)")
@@ -20,7 +18,6 @@ program
     })
     .parseAsync(process.argv);
 
-
 interface CliOptions {
     file: string,
     host: string,
@@ -28,14 +25,14 @@ interface CliOptions {
 }
 async function main(opts: CliOptions) {
     try {
-        let imported = <{ default: any }>await import(opts.file)
-        if (imported.default instanceof Dashboard) {
-            await deploy(imported.default, opts)
+        let imported = await import(opts.file)
+        if (typeof imported?.default?.render === 'function') {
+            await deploy(imported.default.render(), opts)
         } else {
-            console.error("The given path does not point to a TypeScript file that `export default`s a TypedGrafana Dashboard")
+            console.error("The given path does not seem point to a compiled file that `export default`s a TypedGrafana Dashboard")
         }
     } catch (error) {
-        console.error("An error ocurred trying to import the given file")
+        console.error(`The following error ocurred trying to import '${opts.file}':`)
         console.error(error)
     }
 }
@@ -52,7 +49,7 @@ function execShellCommand(cmd): Promise<string> {
     });
 }
 
-async function deploy(dashboard: Dashboard, opts: CliOptions) {
+async function deploy(dashboard: string, opts: CliOptions) {
     const tmp = fileSync()
     writeFileSync(tmp.name, JSON.stringify({ dashboard, overwrite: true, }))
     let cmd = `
