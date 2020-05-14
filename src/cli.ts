@@ -1,20 +1,23 @@
 #!/usr/bin/env node
 import { program } from 'commander'
 import { fileSync } from 'tmp'
-import { writeFileSync } from 'fs'
+import { writeFileSync, existsSync } from 'fs'
 import { resolve } from 'path'
+import { inspect } from 'util'
 
 program
     .version('@VERSION@')
     .description("")
     .command('typed-grafana <file>')
     .option('--no-ssl', "Don't access the API via SSL (not recommended, only for local use)")
+    .option('--verbose')
     .option('--host <host>', 'Grafana host to deploy to', 'localhost:3000')
     .action(async (file, cmdObj) => {
         await main({
             file: resolve(file),
             host: cmdObj.host,
-            scheme: cmdObj.ssl ? 'https' : 'http'
+            scheme: cmdObj.ssl ? 'https' : 'http',
+            verbose: cmdObj.verbose,
         })
     })
     .parseAsync(process.argv);
@@ -23,8 +26,14 @@ interface CliOptions {
     file: string,
     host: string,
     scheme: string,
+    verbose: boolean,
 }
 async function main(opts: CliOptions) {
+    if (!existsSync(opts.file)) {
+        console.error(`Given file '${opts.file}' does not exist`)
+        return
+    }
+
     try {
         let imported = await import(opts.file)
         if (typeof imported?.default?.render === 'function') {
@@ -50,9 +59,15 @@ function execShellCommand(cmd): Promise<string> {
     });
 }
 
-async function deploy(dashboard: string, opts: CliOptions) {
+async function deploy(dashboard: object, opts: CliOptions) {
+    let request = { dashboard, overwrite: true, }
+
+    if (opts.verbose) {
+        console.log("Payload to be sent:", inspect(request, false, 9999, true))
+    }
+
     const tmp = fileSync()
-    writeFileSync(tmp.name, JSON.stringify({ dashboard, overwrite: true, }))
+    writeFileSync(tmp.name, JSON.stringify(request))
     let cmd = `
 curl -v --location --request POST '${opts.scheme}://${opts.host}/api/dashboards/db' \
     --header 'Accept: application/json' \
@@ -62,9 +77,10 @@ curl -v --location --request POST '${opts.scheme}://${opts.host}/api/dashboards/
     --data-binary @${tmp.name}
     `
     let result = JSON.parse(await execShellCommand(cmd))
-    console.log(result)
 
     if (result.status === 'success') {
-        console.log(`Dashboard URL is ${opts.scheme}://${opts.host}${result.url}`)
+        result.fullUrl = `${opts.scheme}://${opts.host}${result.url}`
     }
+
+    console.log(result)
 }
