@@ -1,9 +1,9 @@
-import { Datasource, Graph, PrometheusQuery, ColumnLayout, Dashboard, Context } from "../src"
+import { Datasource, PrometheusQuery, ColumnLayout, Dashboard, Panels } from "../src"
 
 // The parameter is the datasource name in Grafana
 let prometheus = new Datasource("Yay Prometheus")
 
-let http_requests = new Graph({
+let http_requests = new Panels.Graph({
     title: "HTTP requests per minute",
     datasource: prometheus,
 })
@@ -18,5 +18,5 @@ layout.add({
 })
 
 export default new Dashboard({
-    title: "Prometheus monitoring Prometheus"
+    title: "001-minimal-dashboard"
 }).addLayout(layout)

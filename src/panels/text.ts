@@ -17,7 +17,7 @@ export class Text extends Panel {
         content: ""
     }
 
-    constructor(options: TextOptions) {
+    constructor(options: Partial<TextOptions>) {
         super()
         this.options = { ...Text.defaults, ...options }
         this.options['type'] = 'text'

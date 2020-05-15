@@ -1,4 +1,4 @@
-import { StringParameter, Renderable, Context, Layout } from ".."
+import { Renderable, Context, Layout } from ".."
 
 // This doesn't work because setting the graphTooltip option in the]
 // top-level dashboard object doesn't actually do anything. When you do
@@ -10,7 +10,7 @@ import { StringParameter, Renderable, Context, Layout } from ".."
 //     SharedTooltip = 2,
 // }
 
-export interface DashboardOptions {
+interface DashboardOptions {
     title: string,
 }
 export class Dashboard implements Renderable {
