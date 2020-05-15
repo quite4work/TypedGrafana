@@ -69,7 +69,7 @@ async function deploy(dashboard: object, opts: CliOptions) {
     const tmp = fileSync()
     writeFileSync(tmp.name, JSON.stringify(request))
     let cmd = `
-curl -v --location --request POST '${opts.scheme}://${opts.host}/api/dashboards/db' \
+curl -sS --location --request POST '${opts.scheme}://${opts.host}/api/dashboards/db' \
     --header 'Accept: application/json' \
     --header 'Content-Type: application/json' \
     --header "Authorization: Bearer ${process.env.GRAFANA_API_TOKEN}" \

@@ -10,7 +10,10 @@ services:
   grafana:
     # v6.7.3
     image: grafana/grafana@sha256:b409a69218ca5990b61e33fe00121c94b2f9b5a7ec2f3118c703454c26067020
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
     ports:
         - "3000:3000"
-    volumes:
-        - "./grafana-data:/var/lib/grafana"
+    # volumes:
+    #     - "./grafana-data:/var/lib/grafana"

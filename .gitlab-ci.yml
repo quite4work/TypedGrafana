@@ -1,0 +1,17 @@
+variables:
+    GF_SECURITY_ADMIN_USER: admin
+    GF_SECURITY_ADMIN_PASSWORD: password
+
+services:
+- name: grafana/grafana@sha256:b409a69218ca5990b61e33fe00121c94b2f9b5a7ec2f3118c703454c26067020
+  alias: grafana
+
+before_script:
+- apt-get update && apt-get install -y curl jq
+
+image:
+    name: node:13-buster-slim
+
+test:
+    script:
+    - ./go ci-test
