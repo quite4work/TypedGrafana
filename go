@@ -60,6 +60,7 @@ function run-grafana-tests {
 
 function cmd-docker-test {
     cmd-docker-start
+    rm -rf dist/
     tsc
     export GRAFANA_HOST="localhost:3000"
     export GRAFANA_API_TOKEN="$(cmd-docker-create-api-token)"
