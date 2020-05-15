@@ -2,15 +2,15 @@ import { strict as assert } from 'assert';
 import { Renderable, StringOptionMap, Context, Datasource, Panel, StringParameter, GrafanaObj } from ".."
 import { NumberParameter, BooleanParameter } from '..';
 
-export interface YAxisOptions {
-    format: string,
-    logBase: number,
-    show: boolean,
-    label?: string,
-    max?: number,
-    min?: number,
+interface YAxisOptions {
+    format: StringParameter,
+    logBase: NumberParameter,
+    show: BooleanParameter,
+    label?: StringParameter,
+    max?: NumberParameter,
+    min?: NumberParameter,
 }
-export class YAxis implements Renderable {
+export class YAxis extends GrafanaObj {
     options: StringOptionMap & YAxisOptions
     static defaults: YAxisOptions = {
         format: 'short',
@@ -19,24 +19,68 @@ export class YAxis implements Renderable {
     }
 
     constructor(options: Partial<YAxisOptions>) {
+        super()
         this.options = { ...YAxis.defaults, ...options }
     }
+}
 
-    renderWithContext(c: Context): object {
-        return this.options
+interface SeriesOverrideOptions {
+    alias: StringParameter
+    color?: StringParameter
+    fill?: NumberParameter
+    lines?: BooleanParameter
+    dashes?: BooleanParameter
+    hideTooltip?: BooleanParameter
+    nullPointMode?: StringParameter
+}
+export class SeriesOverride extends GrafanaObj {
+    options: StringOptionMap & SeriesOverrideOptions
+    constructor(options: SeriesOverrideOptions) {
+        super()
+        this.options = { ...options }
+    }
+}
+
+abstract class Target extends GrafanaObj { }
+
+interface PrometheusOptions {
+    expr: StringParameter
+    legendFormat?: StringParameter
+    datasource?: Datasource
+}
+export class PrometheusQuery extends Target {
+    options: StringOptionMap & PrometheusOptions
+    constructor(options: PrometheusOptions) {
+        super()
+        this.options = { ...options }
+    }
+}
+
+interface InfluxDbOptions {
+    alias: StringParameter
+    datasource: Datasource
+    query: StringParameter
+}
+export class InfluxDbQuery extends Target {
+    options: StringOptionMap & InfluxDbOptions
+    constructor(options: InfluxDbOptions) {
+        super()
+        this.options = { ...options }
+        this.options['rawQuery'] = true
     }
 }
 
 
-export interface GraphOptions {
-    title: string
-    stack: boolean,
-    datasource: Datasource,
-    yaxes?: YAxis[],
-    seriesOverrides?: SeriesOverride[],
-    interval?: string,
-    bars?: boolean,
-    lines?: boolean,
+
+interface GraphOptions {
+    title: StringParameter
+    stack: BooleanParameter
+    datasource: Datasource
+    yaxes?: YAxis[]
+    seriesOverrides?: SeriesOverride[]
+    interval?: StringParameter
+    bars?: BooleanParameter
+    lines?: BooleanParameter
 }
 export class Graph extends Panel {
     options: StringOptionMap & GraphOptions
@@ -80,58 +124,5 @@ export class Graph extends Panel {
         x.options = { ...this.options }
         x.targets = this.targets
         return <this>x
-    }
-}
-
-
-
-
-
-
-
-abstract class Target extends GrafanaObj { }
-
-interface PrometheusOptions {
-    expr: StringParameter
-    legendFormat?: StringParameter
-    datasource?: Datasource
-}
-export class PrometheusQuery extends Target {
-    options: StringOptionMap & PrometheusOptions
-    constructor(options: PrometheusOptions) {
-        super()
-        this.options = { ...options }
-    }
-}
-
-interface InfluxDbOptions {
-    alias: StringParameter
-    datasource: Datasource
-    query: StringParameter
-}
-export class InfluxDbQuery extends Target {
-    options: StringOptionMap & InfluxDbOptions
-    constructor(options: InfluxDbOptions) {
-        super()
-        this.options = { ...options }
-        this.options['rawQuery'] = true
-    }
-}
-
-
-interface SeriesOverrideOptions {
-    alias: StringParameter
-    color?: StringParameter
-    fill?: NumberParameter
-    lines?: BooleanParameter
-    dashes?: BooleanParameter
-    hideTooltip?: BooleanParameter
-    nullPointMode?: StringParameter
-}
-export class SeriesOverride extends GrafanaObj {
-    options: StringOptionMap & SeriesOverrideOptions
-    constructor(options: SeriesOverrideOptions) {
-        super()
-        this.options = { ...options }
     }
 }

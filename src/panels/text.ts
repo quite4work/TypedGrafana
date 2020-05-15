@@ -1,13 +1,14 @@
 import { Panel, StringOptionMap } from ".."
+import { StringParameter } from "../base_types"
 
 export enum TextMode {
     Markdown = "markdown",
     HTML = "html"
 }
 interface TextOptions {
-    mode: TextMode,
-    content: string,
-    title?: string,
+    mode: TextMode
+    content: StringParameter
+    title?: StringParameter
 }
 export class Text extends Panel {
     options: StringOptionMap & TextOptions

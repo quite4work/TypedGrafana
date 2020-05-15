@@ -8,14 +8,9 @@ export * from './panels/panel'
 export * from './panels/graph'
 export * from './panels/text'
 
-// import { Graph } from './panels/graph'
-// import { Text } from './panels/text'
+import { Graph, Text } from './panels'
 
-
-
-// export class Panels {
-//     static readonly Graph = Graph
-//     static readonly Text = Text
-// }
-
-export * as Panels from './panels'
+export class Panels {
+    static readonly Graph = Graph
+    static readonly Text = Text
+}
