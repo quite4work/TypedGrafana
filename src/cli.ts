@@ -82,5 +82,5 @@ curl -v --location --request POST '${opts.scheme}://${opts.host}/api/dashboards/
         result.fullUrl = `${opts.scheme}://${opts.host}${result.url}`
     }
 
-    console.log(result)
+    console.log(JSON.stringify(result, null, 2))
 }
