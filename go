@@ -64,6 +64,7 @@ function cmd-docker-test {
     tsc
     export GRAFANA_HOST="localhost:3000"
     export GRAFANA_API_TOKEN="$(cmd-docker-create-api-token)"
+    cmd-docker-create-datasource || true
     run-grafana-tests
 }
 
