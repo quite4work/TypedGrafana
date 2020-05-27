@@ -1,4 +1,4 @@
-import { Renderable, Context, Layout } from ".."
+import { NumberParameter, Renderable, Context, Layout } from ".."
 
 // This doesn't work because setting the graphTooltip option in the]
 // top-level dashboard object doesn't actually do anything. When you do
@@ -15,6 +15,7 @@ interface DashboardOptions {
 }
 export class Dashboard implements Renderable {
     options: DashboardOptions
+    _folderId: NumberParameter
 
     context: Context
     layouts: Layout[]
@@ -28,6 +29,15 @@ export class Dashboard implements Renderable {
     addLayout(layout: Layout): this {
         this.layouts.push(layout)
         return this
+    }
+
+    setFolderId(folderId: NumberParameter): this {
+        this._folderId = folderId
+        return this
+    }
+
+    get folderId(): number {
+        return this.context.resolve(this._folderId)
     }
 
     renderWithContext(c: Context): object {
