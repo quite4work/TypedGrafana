@@ -35,12 +35,12 @@ function cmd-docker-start {
 
 function cmd-docker-create-api-token {
     # TODO: error handling
-    curl -sS -X POST -H "Content-Type: application/json" -d "{\"name\":\"key$(date +%s)\", \"role\": \"Admin\"}" http://admin:password@${GRAFANA_HOST}/api/auth/keys | jq -r .key
+    curl -sS -X POST -H "Content-Type: application/json" -d "{\"name\":\"key$(date +%s)\", \"role\": \"Admin\"}" http://admin:password@${GRAFANA_HOST:-localhost:3000}/api/auth/keys | jq -r .key
 }
 
 function cmd-docker-create-datasource {
     # TODO: error handling
-    curl -sS -X POST -H "Content-Type: application/json" -d '{"name": "Yay Prometheus", "type": "prometheus", "access": "proxy", "url": "http://prometheus:9090"}' http://admin:password@${GRAFANA_HOST}/api/datasources 2>&1 1>/dev/null
+    curl -sS -X POST -H "Content-Type: application/json" -d '{"name": "Yay Prometheus", "type": "prometheus", "access": "proxy", "url": "http://prometheus:9090"}' http://admin:password@${GRAFANA_HOST:-localhost:3000}/api/datasources 2>&1 1>/dev/null
 }
 
 function run-grafana-tests {
