@@ -41,7 +41,7 @@ export class Dashboard implements Renderable {
     }
 
     renderWithContext(c: Context): object {
-        let panels: object[] = []
+        let panels: any[] = []
         let cursorX = 0
         let cursorY = 0
         this.layouts.forEach((layout) => {
@@ -50,6 +50,13 @@ export class Dashboard implements Renderable {
             cursorY = res.cursorY
             panels = panels.concat(res.panels)
         })
+
+        var i = 1
+        panels.forEach(panel => {
+            panel.id = i
+            i++
+        })
+
         return { ...this.options, panels }
     }
 
