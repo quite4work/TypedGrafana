@@ -46,7 +46,8 @@ abstract class Target extends GrafanaObj { }
 interface PrometheusOptions {
     expr: StringParameter
     legendFormat?: StringParameter
-    datasource?: Datasource
+    datasource?: Datasource,
+    intervalFactor?: NumberParameter,
 }
 export class PrometheusQuery extends Target {
     options: StringOptionMap & PrometheusOptions
