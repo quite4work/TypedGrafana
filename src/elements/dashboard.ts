@@ -1,4 +1,4 @@
-import { NumberParameter, Renderable, Context, Layout } from ".."
+import { NumberParameter, Context, Layout, StringParameter, StringOptionMap, GrafanaObj, StringMap } from ".."
 
 // This doesn't work because setting the graphTooltip option in the]
 // top-level dashboard object doesn't actually do anything. When you do
@@ -11,17 +11,18 @@ import { NumberParameter, Renderable, Context, Layout } from ".."
 // }
 
 interface DashboardOptions {
-    title: string,
+    title: StringParameter,
 }
-export class Dashboard implements Renderable {
-    options: DashboardOptions
-    _folderId: NumberParameter
+export class Dashboard extends GrafanaObj {
+    options: DashboardOptions & StringOptionMap
+    _folderId: NumberParameter = 0
 
     context: Context
     layouts: Layout[]
-    preRenderCallback: (dashboard: Dashboard, c: Context) => void
+    preRenderCallback: (dashboard: Dashboard, c: Context) => void = () => { }
 
     constructor(options: DashboardOptions) {
+        super()
         this.context = new Context
         this.layouts = []
         this.options = { ...options }
@@ -46,11 +47,11 @@ export class Dashboard implements Renderable {
         return this.context.resolve(this._folderId)
     }
 
-    renderWithContext(c: Context): object {
-        if (!!this.preRenderCallback) {
-            this.preRenderCallback(this, this.context)
-        }
+    preRender(c: Context) {
+        this.preRenderCallback(this, this.context)
+    }
 
+    postRender(result: StringMap<any>, c: Context): StringMap<any> {
         let panels: object[] = []
         let cursorX = 0
         let cursorY = 0
@@ -60,7 +61,7 @@ export class Dashboard implements Renderable {
             cursorY = res.cursorY
             panels = panels.concat(res.panels)
         })
-        return { ...this.options, panels }
+        return { ...result, panels }
     }
 
     render(): object {

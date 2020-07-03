@@ -29,7 +29,7 @@ program
 
 type StringMap = { [key: string]: string }
 function parseContextParameters(params: string[]): StringMap {
-    let context = {}
+    let context: { [key: string]: string } = {}
     params.forEach(x => {
         let [key, value] = x.split("=")
         if (!value) {
@@ -70,10 +70,10 @@ async function main(opts: CliOptions) {
     }
 }
 
-function execShellCommand(cmd): Promise<string> {
+function execShellCommand(cmd: string): Promise<string> {
     const exec = require('child_process').exec;
     return new Promise((resolve, reject) => {
-        exec(cmd, (error, stdout, stderr) => {
+        exec(cmd, (error: any, stdout: string, stderr: string) => {
             if (error) {
                 console.warn(error);
             }

@@ -21,7 +21,7 @@ layout.add({
 })
 
 export default new Dashboard({
-    title: "outside-context-test"
+    title: (c) => `outside-context-test-${c.get("environment")}`
 })
     .addLayout(layout)
     .setPreRender((dashboard: Dashboard, c: Context) => {

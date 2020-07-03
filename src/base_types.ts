@@ -60,15 +60,17 @@ export abstract class GrafanaObj implements Renderable {
 
     preRender(c: Context): void { }
 
+    postRender(current: object, c: Context): StringMap<any> {
+        return current
+    }
+
     renderWithContext(c: Context): StringMap<any> {
         this.preRender(c)
-
         let result: StringMap<any> = {}
         for (let key in this.options) {
             result[key] = this.renderOption(c, this.options[key])
         }
-
-        return result
+        return this.postRender(result, c)
     }
 
     renderOption(c: Context, option: GrafanaOptions): any {
