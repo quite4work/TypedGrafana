@@ -47,7 +47,7 @@ function run-grafana-tests {
     for file in $(ls dist/dashboards/0*.js); do
         run-single-test "$file"
     done
-    run-single-test "dist/dashboards/outside-context-test.js" service=test environment=preview
+    run-single-test "dist/dashboards/outside-context-test.js" environment=preview
 }
 
 function run-single-test {

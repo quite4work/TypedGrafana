@@ -19,6 +19,7 @@ export class Dashboard implements Renderable {
 
     context: Context
     layouts: Layout[]
+    preRenderCallback: (dashboard: Dashboard, c: Context) => void
 
     constructor(options: DashboardOptions) {
         this.context = new Context
@@ -46,6 +47,10 @@ export class Dashboard implements Renderable {
     }
 
     renderWithContext(c: Context): object {
+        if (!!this.preRenderCallback) {
+            this.preRenderCallback(this, this.context)
+        }
+
         let panels: object[] = []
         let cursorX = 0
         let cursorY = 0
@@ -60,6 +65,11 @@ export class Dashboard implements Renderable {
 
     render(): object {
         return this.renderWithContext(this.context)
+    }
+
+    setPreRender(callback: (dashboard: Dashboard, c: Context) => void): this {
+        this.preRenderCallback = callback
+        return this
     }
 
     print(): void {

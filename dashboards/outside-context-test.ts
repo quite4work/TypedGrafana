@@ -22,4 +22,11 @@ layout.add({
 
 export default new Dashboard({
     title: "outside-context-test"
-}).addLayout(layout)
+})
+    .addLayout(layout)
+    .setPreRender((dashboard: Dashboard, c: Context) => {
+        let env = dashboard.context.get("environment")
+        if (env === "preview") {
+            dashboard.context.variables["service"] = "preview-service"
+        }
+    })
