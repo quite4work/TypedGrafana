@@ -26,6 +26,7 @@ export class Context {
     get(idx: string) {
         let value = this.variables[idx]
         if (typeof value === 'undefined') {
+            console.trace(`Context variable '${idx}' was not available`)
             throw `Context variable '${idx}' was not available`
         }
         return value
