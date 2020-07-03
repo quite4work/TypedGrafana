@@ -5,31 +5,48 @@ import { writeFileSync, existsSync } from 'fs'
 import { resolve } from 'path'
 import { inspect } from 'util'
 import { Dashboard } from './elements/dashboard'
+import { Context } from './base_types'
 
 program
     .version('@VERSION@')
     .description("")
-    .command('typed-grafana <file>')
+    .command('typed-grafana <file> [contextParameters...]')
     .option('--no-ssl', "Don't access the API via SSL (not recommended, only for local use)")
     .option('--dry-run')
     .option('--verbose')
     .option('--host <host>', 'Grafana host to deploy to', 'localhost:3000')
-    .action(async (file, cmdObj) => {
+    .action(async (file, contextParameters, cmdObj) => {
         await main({
             file: resolve(file),
             host: cmdObj.host,
             scheme: cmdObj.ssl ? 'https' : 'http',
             verbose: cmdObj.verbose,
+            context: parseContextParameters(contextParameters),
             dryRun: cmdObj.dryRun,
         })
     })
     .parseAsync(process.argv);
+
+type StringMap = { [key: string]: string }
+function parseContextParameters(params: string[]): StringMap {
+    let context = {}
+    params.forEach(x => {
+        let [key, value] = x.split("=")
+        if (!value) {
+            console.error(`Found context parameter ${key} without value. Context parameter must have the format key=value. Ignoring this parameter.`)
+        } else {
+            context[key] = value
+        }
+    })
+    return context
+}
 
 interface CliOptions {
     file: string,
     host: string,
     scheme: string,
     verbose: boolean,
+    context: StringMap,
     dryRun: boolean,
 }
 async function main(opts: CliOptions) {
@@ -47,7 +64,7 @@ async function main(opts: CliOptions) {
             process.exit(1)
         }
     } catch (error) {
-        console.error(`The following error ocurred trying to import '${opts.file}':`)
+        console.error(`\nThe following error ocurred trying to import '${opts.file}':`)
         console.error(error)
         process.exit(1)
     }
@@ -66,6 +83,7 @@ function execShellCommand(cmd): Promise<string> {
 }
 
 async function deploy(dashboard: Dashboard, opts: CliOptions) {
+    dashboard.setContext(new Context(opts.context))
     let request = { dashboard: dashboard.render(), overwrite: true, folderId: dashboard.folderId }
 
     if (!process.env.GRAFANA_API_TOKEN) {

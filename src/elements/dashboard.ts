@@ -36,6 +36,11 @@ export class Dashboard implements Renderable {
         return this
     }
 
+    setContext(context: Context): this {
+        this.context = context
+        return this
+    }
+
     get folderId(): number {
         return this.context.resolve(this._folderId)
     }

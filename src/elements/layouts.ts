@@ -84,8 +84,7 @@ export class ColumnLayout implements Layout {
 
         let panels: StringMap<any>[] = []
         this.panels.forEach((p) => {
-            // TODO this should merge with the given context
-            panels.push(p.panel.renderWithContext(p.context))
+            panels.push(p.panel.renderWithContext(c.merge(p.context)))
         })
 
 

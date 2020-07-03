@@ -44,18 +44,27 @@ function cmd-docker-create-datasource {
 }
 
 function run-grafana-tests {
-    for file in $(ls dist/dashboards/*.js); do
-        notice "Deploying '$file' " -n
-        result="$(node dist/src/cli.js --host "${GRAFANA_HOST}" --no-ssl $file)"
-        status=$(echo "$result" | jq .status)
-        if [[ "$status" == "\"success\"" ]]; then
-            echo "✅"
-        else
-            echo "❌"
-            echo $result
-            exit 1
-        fi
+    for file in $(ls dist/dashboards/0*.js); do
+        run-single-test "$file"
     done
+    run-single-test "dist/dashboards/outside-context-test.js" service=test environment=preview
+}
+
+function run-single-test {
+    local file="$1"
+    shift
+    local additionalArguments="$@"
+
+    notice "Deploying '$file' " -n
+    result="$(node dist/src/cli.js --host "${GRAFANA_HOST}" --no-ssl $file $additionalArguments)"
+    status=$(echo "$result" | jq .status)
+    if [[ "$status" == "\"success\"" ]]; then
+        echo "✅"
+    else
+        echo "❌"
+        echo $result
+        exit 1
+    fi
 }
 
 function cmd-docker-test {
