@@ -1,5 +1,5 @@
 import { Panel, StringOptionMap } from ".."
-import { StringParameter } from "../base_types"
+import { StringParameter, Context } from "../base_types"
 
 export enum TextMode {
     Markdown = "markdown",
@@ -35,14 +35,14 @@ export class Headers {
         return new Text({ mode: TextMode.HTML, content }).setSize(24, 3)
     }
 
-    static service(opts: { name: string, logsUrl: string, repositoryUrl: string, ciUrl: string }): Panel {
-        let content = `
+    static service(opts: { name: StringParameter, logsUrl: StringParameter, repositoryUrl: StringParameter, ciUrl: StringParameter }): Panel {
+        let content = (c: Context) => `
             <center>
-                <h1>${opts.name}</h1>
+                <h1>${c.resolve(opts.name)}</h1>
                 <h2>
-                    <a target="_blank" href="${opts.logsUrl}">Graylog</a> –
-                    <a target="_blank" href="${opts.repositoryUrl}">Repository</a> –
-                    <a target="_blank" href="${opts.ciUrl}">Pipeline</a>
+                    <a target="_blank" href="${c.resolve(opts.logsUrl)}">Graylog</a> –
+                    <a target="_blank" href="${c.resolve(opts.repositoryUrl)}">Repository</a> –
+                    <a target="_blank" href="${c.resolve(opts.ciUrl)}">Pipeline</a>
                 </h2>
             </center>
         `
