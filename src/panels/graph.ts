@@ -32,6 +32,10 @@ interface SeriesOverrideOptions {
     dashes?: BooleanParameter
     hideTooltip?: BooleanParameter
     nullPointMode?: StringParameter
+    yaxis?: NumberParameter
+    linewidth?: NumberParameter
+    dashLength?: NumberParameter
+    spaceLength?: NumberParameter
 }
 export class SeriesOverride extends GrafanaObj {
     options: StringOptionMap & SeriesOverrideOptions
@@ -47,6 +51,7 @@ interface PrometheusOptions {
     expr: StringParameter
     legendFormat?: StringParameter
     datasource?: Datasource,
+    interval?: StringParameter,
     intervalFactor?: NumberParameter,
 }
 export class PrometheusQuery extends Target {
@@ -71,7 +76,11 @@ export class InfluxDbQuery extends Target {
     }
 }
 
-
+export enum NullPointMode {
+    NullAsZero = "null as zero",
+    Null = "null",
+    Connected = "connected",
+}
 
 interface GraphOptions {
     title: StringParameter
@@ -82,6 +91,10 @@ interface GraphOptions {
     interval?: StringParameter
     bars?: BooleanParameter
     lines?: BooleanParameter
+    linewidth?: NumberParameter,
+    fill?: NumberParameter,
+    fillGradient?: NumberParameter,
+    nullPointMode?: NullPointMode,
 }
 export class Graph extends Panel {
     options: StringOptionMap & GraphOptions
