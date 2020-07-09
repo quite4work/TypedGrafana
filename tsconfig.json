@@ -6,7 +6,8 @@
         "outDir": "./dist",
         "esModuleInterop": true,
         "composite": true,
-        "strict": true
+        "strict": true,
+        "noImplicitAny": false,
     },
     "include": [
         "src/**/*",
