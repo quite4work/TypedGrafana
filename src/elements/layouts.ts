@@ -1,5 +1,6 @@
 import { Context, Panel, StringMap } from ".."
-import { positionUtil } from "../positioning"
+import { positionUtil, PConfig, ColumnState } from "../positioning"
+import { isArray } from "util"
 
 // Very similar to Renderable, except that it also takes and returns it's
 // current "cursor position", i.e. the position where the last
@@ -40,18 +41,25 @@ export class ColumnLayout implements Layout {
         this.options = { ...ColumnLayout.defaults, ...options }
     }
 
-    add(opts: { column?: number, context?: Context, panels: Panel[] }) {
+    add(opts: { column?: number, context?: Context, panels: Panel[] | Panel[][] }) {
         let column = opts.column ?? 0
         let context = opts.context ?? new Context
 
         opts.panels.forEach((panel) => {
-            this.panels.push({ panel: panel.clone(), context, column })
+            if (isArray(panel)) {
+                panel.forEach((panel) => {
+                    this.panels.push({ panel: panel.clone(), context, column })
+                })
+            } else {
+                this.panels.push({ panel: panel.clone(), context, column })
+            }
         })
     }
 
     renderWithContext(c: Context, cursorX: number, cursorY: number): { panels: object, cursorX: number, cursorY: number } {
         let columnXOffset = 0
-        let allYs: number[] = [cursorY]
+        //let allYs: number[] = [cursorY]
+        let columnState = new ColumnState
 
         for (let columnIdx in this.options.columns) {
             let panels = this.panels.filter((p) => p.column === parseInt(columnIdx))
@@ -59,24 +67,27 @@ export class ColumnLayout implements Layout {
             let column = this.options.columns[columnIdx]
 
             let currentX = columnXOffset
-            let currentY = cursorY
+            //let currentY = cursorY
+
+            let config: PConfig = {
+                columnState,
+                columnWidth: column.width,
+                defaultHeight: this.options.defaultPanelHeight,
+                defaultWidth: this.options.defaultPanelWidth,
+                minX: columnXOffset,
+                maxX: columnXOffset + column.width
+            }
 
 
             panels.forEach((p) => {
-                let res = positionUtil(
+                positionUtil(
                     p.panel,
-                    columnXOffset,
-                    columnXOffset + column.width,
-                    this.options.defaultPanelWidth,
-                    this.options.defaultPanelHeight,
-                    currentX,
-                    currentY,
-                    column.width
+                    config
                 )
 
-                currentX = res.currentX
-                currentY = res.currentY
-                allYs.push(currentY + res.height)
+                // currentX = res.currentX
+                // currentY = res.currentY
+                // allYs.push(currentY + res.height)
             })
 
             columnXOffset += column.width
@@ -91,7 +102,7 @@ export class ColumnLayout implements Layout {
         return {
             panels,
             cursorX: 0,
-            cursorY: Math.max(...allYs),
+            cursorY: Math.max(...columnState.state),
         }
     }
 }
