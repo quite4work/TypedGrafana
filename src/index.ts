@@ -3,6 +3,7 @@ export * from './base_types'
 export * from './elements/dashboard'
 export * from './elements/datasource'
 export * from './elements/layouts'
+export * from './elements/templating'
 
 export * from './panels/panel'
 export * from './panels/graph'

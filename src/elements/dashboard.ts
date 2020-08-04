@@ -1,4 +1,4 @@
-import { NumberParameter, Context, Layout, StringParameter, StringOptionMap, GrafanaObj, StringMap } from ".."
+import { NumberParameter, Context, Layout, StringParameter, StringOptionMap, GrafanaObj, StringMap, Variable } from ".."
 
 // This doesn't work because setting the graphTooltip option in the]
 // top-level dashboard object doesn't actually do anything. When you do
@@ -19,17 +19,24 @@ export class Dashboard extends GrafanaObj {
 
     context: Context
     layouts: Layout[]
+    variables: Variable[]
     preRenderCallback: (dashboard: Dashboard, c: Context) => void = () => { }
 
     constructor(options: DashboardOptions) {
         super()
         this.context = new Context
         this.layouts = []
+        this.variables = []
         this.options = { ...options }
     }
 
     addLayout(layout: Layout): this {
         this.layouts.push(layout)
+        return this
+    }
+
+    addVariable(variable: Variable) {
+        this.variables.push(variable)
         return this
     }
 
@@ -61,7 +68,14 @@ export class Dashboard extends GrafanaObj {
             cursorY = res.cursorY
             panels = panels.concat(res.panels)
         })
-        return { ...result, panels }
+
+        let templating = {
+            list: this.variables.map((v) => {
+                return v.renderWithContext(c)
+            })
+        }
+
+        return { ...result, panels, templating }
     }
 
     render(): object {
