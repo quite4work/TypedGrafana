@@ -56,9 +56,14 @@ interface PrometheusOptions {
 }
 export class PrometheusQuery extends Target {
     options: StringOptionMap & PrometheusOptions
+
+    static defaults: PrometheusOptions = {
+        expr: null,
+    }
+
     constructor(options: PrometheusOptions) {
         super()
-        this.options = { ...options }
+        this.options = { ...PrometheusQuery.defaults, ...options }
     }
 }
 
