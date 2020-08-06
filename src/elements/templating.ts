@@ -3,18 +3,9 @@ import { assert } from "console";
 
 interface CustomVariableOptions {
     name: StringParameter
-    multi: BooleanParameter
-}
-
-
-const foldLeft = <A, B>(xs: Array<A>, zero: B) => (f: (b: B, a: A) => B): B => {
-    const len = xs.length;
-    if (len === 0) return zero;
-    else {
-        const head = xs[0];
-        const tails = xs.slice(1);
-        return foldLeft(tails, f(zero, head))(f);
-    }
+    multi?: BooleanParameter
+    includeAll?: BooleanParameter
+    allValue?: StringParameter
 }
 
 // Marker interface
@@ -27,13 +18,21 @@ type Choice = { text: StringParameter, value: StringParameter }
 
 export class CustomVariable extends Variable {
     options: StringOptionMap & CustomVariableOptions
+    static defaults: CustomVariableOptions = {
+        name: "",
+        multi: false,
+        includeAll: false,
+        allValue: null,
+    }
 
     choices: Choice[]
 
     constructor(opts: CustomVariableOptions) {
         super()
         this.choices = []
-        this.options = { ...opts }
+        this.options = { ...CustomVariable.defaults, ...opts }
+        this.options['type'] = 'custom'
+        this.options['query'] = 'ams1,ams2'
     }
 
     addOption(opts: { value: StringParameter, text?: StringParameter }) {
@@ -42,6 +41,10 @@ export class CustomVariable extends Variable {
     }
 
     postRender(current: object, c: Context): StringMap<any> {
+        if (this.options.includeAll) {
+            this.choices.unshift({ text: "All", value: "$__all" })
+        }
+
         assert(this.choices.length > 0, `When creating a custom variable you must provide at least one option (variable name: ${this.options.name})`)
 
         let choices = this.choices.map((choice) => {
