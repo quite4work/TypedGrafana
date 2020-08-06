@@ -50,6 +50,11 @@ As you can see below, there's no shortage of other projects that try to make Gra
 * Very limited autocompletion when using `grafana-dash-gen`
 
 
+## Limitations
+
+* It is, as far as I can tell, not possible to update template variables via the API in a way that executes the query. This means that any variable that fetches its values via a query will be an issue.
+
+
 ## Similar projects
 
 * [grafana-dash-gen (JavaScript)](https://github.com/uber/grafana-dash-gen)
