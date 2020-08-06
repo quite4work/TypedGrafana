@@ -41,7 +41,7 @@ export class ColumnLayout implements Layout {
         this.options = { ...ColumnLayout.defaults, ...options }
     }
 
-    add(opts: { column?: number, context?: Context, panels: Panel[] | Panel[][] }) {
+    add(opts: { column?: number, context?: Context, panels: (Panel | Panel[])[] }) {
         let column = opts.column ?? 0
         let context = opts.context ?? new Context
 
