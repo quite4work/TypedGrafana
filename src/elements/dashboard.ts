@@ -1,17 +1,17 @@
-import { NumberParameter, Context, Layout, StringParameter, StringOptionMap, GrafanaObj, StringMap, Variable } from ".."
+import { NumberParameter, Context, Layout, StringParameter, StringOptionMap, GrafanaObj, StringMap, Variable, Graph, TooltipSortMode } from ".."
 
-// This doesn't work because setting the graphTooltip option in the]
-// top-level dashboard object doesn't actually do anything. When you do
-// this in the grafana UI, it updates every panel individually with a
-// `tooltip` option :(
-// export enum TooltipType {
-//     Default = 0,
-//     SharedCrosshair = 1,
-//     SharedTooltip = 2,
-// }
+export enum TooltipType {
+    Default = 0,
+    SharedCrosshair = 1,
+    SharedTooltip = 2,
+}
 
 interface DashboardOptions {
     title: StringParameter,
+    graphTooltip?: TooltipType,
+
+    // Legacy, pre schema version 14, https://community.grafana.com/t/graphtooltip-does-not-get-applied-when-set-in-scripted-dashboard/4668
+    sharedCrosshair?: TooltipType,
 }
 export class Dashboard extends GrafanaObj {
     options: DashboardOptions & StringOptionMap
@@ -89,5 +89,13 @@ export class Dashboard extends GrafanaObj {
 
     print(): void {
         console.log(JSON.stringify(this.render(), null, 2))
+    }
+
+    setSharedCrosshair(): this {
+        Graph.defaults.tooltip.shared = true
+        Graph.defaults.tooltip.sort = TooltipSortMode.Decreasing
+        this.options.graphTooltip = TooltipType.SharedCrosshair
+        this.options.sharedCrosshair = TooltipType.SharedCrosshair
+        return this
     }
 }

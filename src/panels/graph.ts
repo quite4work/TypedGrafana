@@ -87,6 +87,21 @@ export enum NullPointMode {
     Connected = "connected",
 }
 
+export enum TooltipSortMode {
+    None = 0,
+    Increasing = 1,
+    Decreasing = 2,
+}
+
+class TooltipOptions implements Renderable {
+    shared?: BooleanParameter
+    sort?: TooltipSortMode
+
+    renderWithContext(c: Context): object {
+        return { shared: c.resolve(this.shared), sort: this.sort, value_type: 'individual' }
+    }
+}
+
 interface GraphOptions {
     title: StringParameter
     stack: BooleanParameter
@@ -100,6 +115,7 @@ interface GraphOptions {
     fill?: NumberParameter,
     fillGradient?: NumberParameter,
     nullPointMode?: NullPointMode,
+    tooltip?: TooltipOptions
 }
 export class Graph extends Panel {
     options: StringOptionMap & GraphOptions
@@ -107,6 +123,7 @@ export class Graph extends Panel {
         title: "Untitled Graph",
         stack: false,
         datasource: Datasource.Mixed,
+        tooltip: new TooltipOptions
     }
 
     targets: Target[]
