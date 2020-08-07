@@ -1,9 +1,10 @@
 # TypedGrafana
 
-**Disclaimer: early stage of development**
-
 This library is an attempt to provide a declarative way to define Grafana dashboards that is more powerful and less obscure than the Grafana JSON model.
 
+## Disclaimer: early stage of development
+
+This library is in production use, but only for a specific use-case. This means, for example, that currently only `PrometheusQuery`s are implemented. However, adding new elements such as data sources or panel types is not very time consuming, and I'm willing to help :)
 
 ## Quick start
 
@@ -37,8 +38,6 @@ export default new Dashboard({
 ```
 
 This will create a very simple dashboard with just a single graph.
-
-(TODO work in progress)
 
 
 ## Why?
