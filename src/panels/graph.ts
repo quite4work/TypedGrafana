@@ -36,6 +36,7 @@ interface SeriesOverrideOptions {
     linewidth?: NumberParameter
     dashLength?: NumberParameter
     spaceLength?: NumberParameter
+    stack?: BooleanParameter
 }
 export class SeriesOverride extends GrafanaObj {
     options: StringOptionMap & SeriesOverrideOptions
@@ -146,6 +147,7 @@ export class Graph extends Panel {
     }
 
     preRender(c: Context): void {
+        super.preRender(c)
         this.options['type'] = "graph"
         this.options['targets'] = this.targets
     }

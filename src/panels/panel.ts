@@ -1,6 +1,13 @@
-import { GrafanaObj, GridPosition } from ".."
+import { GrafanaObj, GridPosition, Context } from ".."
 
 export abstract class Panel extends GrafanaObj {
+    static nextId: number = 1
+
+    preRender(c: Context): void {
+        this.options['id'] = Panel.nextId
+        Panel.nextId += 1
+    }
+
     setGridPosition(pos: GridPosition): this {
         this.options.gridPos = pos
         return this

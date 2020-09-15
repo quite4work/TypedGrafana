@@ -27,7 +27,7 @@ export class Dashboard extends GrafanaObj {
         this.context = new Context
         this.layouts = []
         this.variables = []
-        this.options = { ...options }
+        this.options = { ...options, schemaVersion: 19 }
     }
 
     addLayout(layout: Layout): this {
@@ -55,6 +55,7 @@ export class Dashboard extends GrafanaObj {
     }
 
     preRender(c: Context) {
+        super.preRender(c)
         this.preRenderCallback(this, this.context)
     }
 
@@ -95,7 +96,6 @@ export class Dashboard extends GrafanaObj {
         Graph.defaults.tooltip.shared = true
         Graph.defaults.tooltip.sort = TooltipSortMode.Decreasing
         this.options.graphTooltip = TooltipType.SharedCrosshair
-        this.options.sharedCrosshair = TooltipType.SharedCrosshair
         return this
     }
 }
