@@ -37,6 +37,7 @@ interface SeriesOverrideOptions {
     dashLength?: NumberParameter
     spaceLength?: NumberParameter
     stack?: BooleanParameter
+    transform?: StringParameter
 }
 export class SeriesOverride extends GrafanaObj {
     options: StringOptionMap & SeriesOverrideOptions
