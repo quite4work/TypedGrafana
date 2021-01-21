@@ -55,6 +55,8 @@ interface PrometheusOptions {
     datasource?: Datasource,
     interval?: StringParameter,
     intervalFactor?: NumberParameter,
+    instant?: BooleanParameter,
+    format?: StringParameter
 }
 export class PrometheusQuery extends Target {
     options: StringOptionMap & PrometheusOptions
