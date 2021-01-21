@@ -47,7 +47,7 @@ export class SeriesOverride extends GrafanaObj {
     }
 }
 
-abstract class Target extends GrafanaObj { }
+export abstract class Target extends GrafanaObj { }
 
 interface PrometheusOptions {
     expr: StringParameter
