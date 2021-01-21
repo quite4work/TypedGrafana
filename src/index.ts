@@ -8,6 +8,7 @@ export * from './elements/templating'
 export * from './panels/panel'
 export * from './panels/graph'
 export * from './panels/text'
+export * from './panels/table'
 
 import { Graph, Text } from './panels'
 
