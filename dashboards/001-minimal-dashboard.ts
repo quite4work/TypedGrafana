@@ -18,5 +18,6 @@ layout.add({
 })
 
 export default new Dashboard({
-    title: "001-minimal-dashboard"
+    title: "001-minimal-dashboard",
+    tags: ["generated", "minimal"]
 }).addLayout(layout)

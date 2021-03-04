@@ -9,6 +9,7 @@ export enum TooltipType {
 interface DashboardOptions {
     title: StringParameter,
     graphTooltip?: TooltipType,
+    tags?: Array<string>,
 
     // Legacy, pre schema version 14, https://community.grafana.com/t/graphtooltip-does-not-get-applied-when-set-in-scripted-dashboard/4668
     sharedCrosshair?: TooltipType,
